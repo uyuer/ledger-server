@@ -4,21 +4,28 @@ const gatherToken = async (ctx, next) => {
     await next();
 }
 
-const authUrl = (reg, checkFn) => {
+const authUrl = (reg, verifyJwtToken) => {
     return async (ctx, next) => {
         if (reg.test(ctx.request.path)) {
-            if (!ctx.session.user) {
-                return ctx.throw(401, '未登录')
-            }
             let authorization = ctx.header.authorization;
             let [, token] = authorization ? authorization.match(/^Bearer\s(.+)$/) : [];
             if (!token) {
-                return ctx.throw(401, '没有token信息,未登录')
+                let err = new Error('没有token信息,未登录');
+                err.status = 401;
+                err.message = '没有token信息,未登录';
+                return ctx.app.emit('error', err, ctx)
             }
-            try {
-                let decoded = await checkFn(token);
-            } catch (error) {
-                return ctx.app.emit('error', error, ctx)
+            if (!ctx.session.user) {
+                try {
+                    let decoded = await verifyJwtToken(token);
+                    let info = { ...decoded, token };
+                    ctx.session.user = info;
+                } catch (error) {
+                    let err = new Error(error.messgae);
+                    err.status = 401;
+                    err.message = error.message;
+                    return ctx.app.emit('error', err, ctx)
+                }
             }
         }
         await next(ctx);

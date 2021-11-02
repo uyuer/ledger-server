@@ -19,14 +19,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.STRING(10),
     },
-    creatorId: {
+    userId: {
       comment: "创建者id",
       allowNull: false,
       type: DataTypes.INTEGER,
     },
-    isSystemCreate: {
+    createdByUser: {
       comment: "是否是系统创建",
       allowNull: false,
+      defaultValue: true,
       type: DataTypes.BOOLEAN,
     }
   }, {

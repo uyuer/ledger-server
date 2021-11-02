@@ -1,7 +1,9 @@
-const play = require('./play');
-const page = require('./page');
+const book = require('./book');
+const label = require('./label');
+const detail = require('./detail');
 
 module.exports = {
-    page,
-    play,
+    book,
+    label,
+    detail,
 }

@@ -44,7 +44,7 @@ app.use(middle.param)
 app.use(middle.verifyParams)
 
 app.use(middle.token.gatherToken)
-app.use(middle.token.authUrl(new RegExp(`^${config.API}`), verifyJwtToken)) // 检查是否登录
+app.use(middle.token.authUrl(new RegExp(`^${config.API}`), verifyJwtToken))
 app.use(middle.formatter(new RegExp(`^${config.API}`)))
 app.use(middle.formatter(new RegExp(`^${'/sso/'}`)))
 

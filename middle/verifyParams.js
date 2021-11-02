@@ -8,7 +8,8 @@ fields: {
     code: [{ required: true, message: "验证码不可为空" }, { pattern: /^\d{4}$/, message: "验证码输入错误" }],
 },
 */
-const typeList = ['required', 'pattern', 'validator']; // 验证时顺序
+const { getType, isArray } = require("../lib/utils");
+const typeList = ['required', 'pattern', 'max', 'validator']; // 验证时顺序
 const typeValidFn = {
     required: function (value, condition, message) {
         if (!condition || (condition && value)) {
@@ -20,6 +21,12 @@ const typeValidFn = {
         let patt = new RegExp(condition);
         return { valid: patt.test(value), message }
     },
+    max: function (value, condition, message) {
+        if (value.length <= condition) {
+            return { valid: true, message }
+        }
+        return { valid: false, message }
+    },
     validator: function (value, condition, message) {
         let isFunction = Object.prototype.toString.call(condition).match(/^\[object\s(.*)\]$/)[1].toLowerCase() === 'function';
         if (!isFunction) {
@@ -30,19 +37,16 @@ const typeValidFn = {
 }
 const verifyParams = async (ctx, next) => {
     ctx.verifyParams = function (fields) {
-        let query = {
+        let params = {
             GET: ctx.request.query,
             POST: ctx.request.body,
         }[ctx.request.method];
-        let param = {};
-        for (let key in fields) {
-            param[key] = query[key];
-        }
+
         // 尝试使用生成器函数完成参数验证
-        let checkParams = function* (fields, param) {
-            for (let key in fields) {
-                let field = fields[key];
-                let value = param[key];
+        let checkParams = function* (f, p) {
+            for (let key in f) {
+                let field = f[key];
+                let value = p[key];
                 let order = [];
                 // 整理排序,按typeList顺序排序
                 for (let i = 0; i < typeList.length; i++) {
@@ -59,26 +63,48 @@ const verifyParams = async (ctx, next) => {
                 }
             }
         }
-        let checker = checkParams(fields, param);
-        let result = null;
-        for (let isDone = false; !isDone;) {
-            let temp = checker.next();
-            let { value, done } = temp;
-            if (done) {
-                result = { valid: true };
-                break;
+
+        let verifyFn = function (ctx, f, p) {
+            let param = {};
+            for (let key in f) {
+                param[key] = p[key];
             }
-            let { valid } = value || {};
+            let checker = checkParams(f, param);
+            let result = null;
+            for (let isDone = false; !isDone;) {
+                let temp = checker.next();
+                let { value, done } = temp;
+                if (done) {
+                    result = { valid: true };
+                    break;
+                }
+                let { valid } = value || {};
+                if (!valid) {
+                    result = value;
+                    break;
+                }
+            }
+            let { valid, message } = result || {};
             if (!valid) {
-                result = value;
-                break;
+                return ctx.throw(400, message);
             }
+            return param
         }
-        let { valid, message } = result || {};
-        if (!valid) {
-            return ctx.throw(400, message);
+
+        let paramstype = getType(params);
+        let fieldsType = getType(fields);
+        if (fieldsType !== paramstype) {
+            return ctx.throw(400, '参数类型错误,期望' + fieldsType + '类型')
         }
-        return param
+        if (isArray(fields)) {
+            return params.map(item => {
+                return verifyFn(ctx, fields[0], item)
+            })
+        } else {
+            return verifyFn(ctx, fields, params)
+        }
+
+
     }
     await next();
 }
