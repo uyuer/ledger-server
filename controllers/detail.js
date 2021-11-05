@@ -29,9 +29,9 @@ exports.addMultiple = async (ctx) => {
         bookId: rules.detail.bookId,
     }])
     console.log(params)
-    let data = params.map(item => ({ ...item, userId }))
     let { id: userId } = ctx.session.user || {};
     let { Detail } = db.models;
+    let data = params.map(item => ({ ...item, userId }))
     let count = await Detail.bulkCreate(data, { validate: true });
     let result = count.length ? true : false;
     ctx.body = result;
