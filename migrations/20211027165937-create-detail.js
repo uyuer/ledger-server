@@ -32,7 +32,7 @@ module.exports = {
       amount: {
         comment: "金额",
         allowNull: false,
-        type: Sequelize.DOUBLE(8, 2),
+        type: Sequelize.DECIMAL(8, 2),
       },
       labelId: {
         comment: "分类标签id",

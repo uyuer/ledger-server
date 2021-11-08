@@ -13,14 +13,15 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING(10),
       },
-      creatorId: {
+      userId: {
         comment: "创建者id",
         allowNull: false,
         type: Sequelize.INTEGER,
       },
-      isSystemCreate: {
+      createdByUser: {
         comment: "是否是系统创建",
         allowNull: false,
+        defaultValue: true,
         type: Sequelize.BOOLEAN,
       },
       createdAt: {
