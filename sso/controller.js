@@ -2,7 +2,9 @@ const superagent = require('superagent');
 
 const { verifyJwtToken } = require("./jwtVerify");
 const { ssoServerUrl, ssoServerJWTUrl, ssoServerLogoutUrl, ssoServerLoginUrl, appToken } = require("./config");
-
+const info = async (ctx, next) => {
+    ctx.body = ssoServerLoginUrl;
+}
 const logout = async (ctx, next) => {
     let { globalSessionID } = ctx.session?.user || {};
     let res = await superagent.post(ssoServerLogoutUrl).send({ globalSessionID })
@@ -38,6 +40,7 @@ const doLogin = async (ctx, next) => {
 }
 
 module.exports = {
+    info,
     logout,
     doLogin,
 }

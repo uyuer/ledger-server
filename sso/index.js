@@ -2,6 +2,7 @@ const router = require('koa-router')();
 const controller = require('./controller');
 
 const routes = {
+    'get /sso/info': { handler: controller.info },
     'post /sso/logout': { handler: controller.logout },
     'post /sso/doLogin': { handler: controller.doLogin },
 }
