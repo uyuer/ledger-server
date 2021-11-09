@@ -8,9 +8,9 @@ const {
     JWT_PUBLIC_KEY, // 公有密钥
 } = process.env;
 
-const publicKey =
-    JWT_PUBLIC_KEY.replace(/\\n/g, '\n') ||
-    fs.readFileSync(path.resolve(__dirname, "./jwtPublic.key"));
+const publicKey = fs.readFileSync(path.resolve(__dirname, "./jwtPublic.key"));
+    // JWT_PUBLIC_KEY.replace(/\\n/g, '\n') ||
+    // fs.readFileSync(path.resolve(__dirname, "./jwtPublic.key"));
 
 const ssoServerUrl = SSO_SERVER_URL;
 const ssoServerLoginUrl = ssoServerUrl + '/login';
