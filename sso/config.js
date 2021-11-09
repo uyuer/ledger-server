@@ -8,7 +8,7 @@ const {
     JWT_PUBLIC_KEY, // 公有密钥
 } = process.env;
 
-const publicKey = fs.readFileSync(path.resolve(__dirname, "./jwtPublic.key"));
+const publicKey = '1234'; // fs.readFileSync(path.resolve(__dirname, "./jwtPublic.key"));
     // JWT_PUBLIC_KEY.replace(/\\n/g, '\n') ||
     // fs.readFileSync(path.resolve(__dirname, "./jwtPublic.key"));
 
