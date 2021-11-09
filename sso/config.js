@@ -7,8 +7,8 @@ const {
     CLIENT_APP_TOKEN, // 子系统sso访问令牌
     JWT_PUBLIC_KEY, // 公有密钥
 } = process.env;
-
-const publicKey = '1234'; // fs.readFileSync(path.resolve(__dirname, "./jwtPublic.key"));
+console.log(JWT_PUBLIC_KEY)
+const publicKey = JWT_PUBLIC_KEY.replace(/\\n/g, '\n'); // fs.readFileSync(path.resolve(__dirname, "./jwtPublic.key"));
     // JWT_PUBLIC_KEY.replace(/\\n/g, '\n') ||
     // fs.readFileSync(path.resolve(__dirname, "./jwtPublic.key"));
 
