@@ -9,10 +9,10 @@ const {
 // 用于sequelize-cli的配置
 const dbConfig = {
     development: {
-        username: 'ledger_admin',
-        password: '12345678',
-        database: 'ledger',
-        host: 'localhost',
+        username: DB_USERNAME,
+        password: DB_PASSWORD,
+        database: DB_NAME,
+        host: DB_HOST,
         dialect: 'mysql'
     },
     test: {
