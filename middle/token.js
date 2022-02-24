@@ -15,17 +15,15 @@ const authUrl = (reg, verifyJwtToken) => {
                 err.message = '没有token信息,未登录';
                 return ctx.app.emit('error', err, ctx)
             }
-            if (!ctx.session.user) {
-                try {
-                    let decoded = await verifyJwtToken(token);
-                    let info = { ...decoded, token };
-                    ctx.session.user = info;
-                } catch (error) {
-                    let err = new Error(error.messgae);
-                    err.status = 401;
-                    err.message = error.message;
-                    return ctx.app.emit('error', err, ctx)
-                }
+            try {
+                let decoded = await verifyJwtToken(token);
+                let info = { ...decoded, token };
+                ctx.session.user = info;
+            } catch (error) {
+                let err = new Error(error.messgae);
+                err.status = 401;
+                err.message = error.message;
+                return ctx.app.emit('error', err, ctx)
             }
         }
         await next(ctx);
